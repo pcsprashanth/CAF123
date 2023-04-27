@@ -1,0 +1,6 @@
+ad_domain_name                      = "xxxxxx.net"
+ad_domain_netbios_name              = "xxxxxx"
+ad_admin_username                   = "dcadmin"
+ad_dc1_name                         = "pwdc-xxxx01"
+ad_dc2_name                         = "pwdc-xxxx02"
+ad_username                         = "dcadmin@xxxxxx.net"

@@ -1,0 +1,37 @@
+trigger:
+  branches:
+    include:
+    - main
+    - master
+
+stages:
+- stage: Publish_Modules_As_artifacts
+  jobs:
+  - job: Publish_Modules_As_artifacts
+    variables: 
+    - template: variables.yml
+    pool:
+      ${{ if ne(variables.vmImage, '') }}:
+        vmImage: ${{ variables.vmImage }}
+      ${{ if ne(variables.poolName, '') }}:
+        name: ${{ variables.poolName }}
+    steps:
+
+    - task: CopyFiles@2
+      displayName: "Copy provider configurations"
+      condition: succeeded()
+      inputs:
+        SourceFolder: '$(System.DefaultWorkingDirectory)/modules'
+        Contents: |
+          **/*
+          !.terraform/**/*
+        TargetFolder: '$(Build.ArtifactStagingDirectory)'
+        CleanTargetFolder: true
+        flattenFolders: false
+
+    - task: PublishBuildArtifacts@1
+      inputs:
+        PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+        ArtifactName: 'modules'
+        publishLocation: 'Container'
+        # StoreAsTar: true

@@ -1,0 +1,5 @@
+variables:
+  ServiceConnection: 'SPN-MG-ADO-To-Core' # <--- CHANGE TO DEVOPS SERVICE CONNECTION NAME
+
+  vmImage: 'ubuntu-latest'
+  poolName: ''
