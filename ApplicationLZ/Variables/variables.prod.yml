@@ -1,0 +1,5 @@
+variables:
+  - group: Lz-App1-prod
+
+  - name: backendServiceArm
+    value: "xxxxxxx"

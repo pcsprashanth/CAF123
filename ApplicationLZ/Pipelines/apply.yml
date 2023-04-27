@@ -1,0 +1,41 @@
+parameters:
+  Layer: ''
+  projectid: ''
+
+steps:
+
+### download modules artifacts from tf-module repository
+  - task: DownloadBuildArtifacts@1
+    inputs:
+      buildType: 'specific'
+      project: '${{ parameters.projectid }}'
+      pipeline: '23'
+      buildVersionToDownload: 'latest'
+      downloadType: 'single'
+      artifactName: 'modules'
+      downloadPath: '$(System.ArtifactsDirectory)'
+    displayName: 'Download Modules'  
+
+### download build artifacts from current repository
+  - task: DownloadBuildArtifacts@0
+    inputs:
+      buildType: 'current'
+      downloadType: 'single'
+      artifactName: 'ApplicationLZ'
+      downloadPath: '$(System.ArtifactsDirectory)'
+      cleanDestinationFolder: false
+    displayName: 'Download Terraform files for running plan'  
+
+  - task: Bash@3
+    name: 'TerraformApply'
+    env:
+      ARM_CLIENT_SECRET: $(clientsecret)
+    inputs:
+      targetType: 'inline'
+      script: |
+        terraform init -backend-config="resource_group_name=$TERRAFORMSTORAGERG" \
+                      -backend-config="storage_account_name=$TERRAFORMSTORAGEACCOUNT" \
+                      -backend-config="container_name=$TERRAFORMSTORAGECONTAINER" \
+                      -backend-config="key=$STATEFILENAME"
+        terraform apply main.tfplan
+      workingDirectory: '$(System.ArtifactsDirectory)/ApplicationLZ/Layers/${{ parameters.Layer }}'

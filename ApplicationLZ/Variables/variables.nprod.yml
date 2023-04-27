@@ -1,0 +1,7 @@
+##### Core resources state file is being maintained under Management Subscription ########
+
+variables:
+  - group: Lz-App1-nprod
+
+  - name: backendServiceArm
+    value: "landingzone-nprd"
