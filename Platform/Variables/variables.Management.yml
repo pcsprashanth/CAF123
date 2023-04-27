@@ -1,0 +1,13 @@
+variables:
+  - group: Management-Variables
+
+#Below Vairables are added in the variable group
+#   TERRAFORMSTORAGERG --- backend storage RG name
+#   TERRAFORMSTORAGEACCOUNT --- backend storage account name
+#   TERRAFORMSTORAGECONTAINER --- backend storage container name
+#   STATEFILENAME --- state file name
+#   clientsecret --- client secret of SPN that has access to subscription where deployment will be done
+#   ARM_SUBSCRIPTION_ID --- subscription where deployment needs to be done
+
+  - name: backendServiceArm
+    value: "platform-management"

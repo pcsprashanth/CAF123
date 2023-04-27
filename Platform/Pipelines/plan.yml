@@ -1,0 +1,83 @@
+parameters:
+  Layer: ''
+  projectid: ''
+  vmImage: $(vmImage)
+  poolName: $(poolName)
+
+jobs:
+- job: ${{ parameters.Layer }}_Resources_Plan
+  variables: 
+  - template: ../Variables/variables.${{ parameters.Layer }}.yml
+  pool:
+    ${{ if ne(parameters.vmImage, '') }}:
+      vmImage: ${{ parameters.vmImage }}
+    ${{ if ne(parameters.poolName, '') }}:
+      name: ${{ parameters.poolName }}
+  steps:
+
+  - task: AzureCLI@2
+    inputs:
+      azureSubscription: '${{ variables.backendServiceArm }}'
+      scriptType: 'bash'
+      scriptLocation: 'inlineScript'
+      inlineScript: |
+        ###### To Create Backend Azure Resources######
+        # Set context
+        az account set --subscription $(ARM_SUBSCRIPTION_ID)
+        
+        # Create RG
+        az group create -l westeurope -n $(terraformstoragerg)
+        
+        # Create Storage and container
+        az storage account create --name $(terraformstorageaccount) --resource-group $(terraformstoragerg) --location westeurope --sku Standard_LRS
+        az storage container create --name $(terraformstoragecontainer) --account-name $(terraformstorageaccount)
+        
+        # Enable storage versioning
+        az storage account blob-service-properties update --account-name $(terraformstorageaccount) --resource-group $(terraformstoragerg) --enable-versioning true
+    enabled: false
+
+### download modules artifacts from tf-module repository
+  - task: DownloadBuildArtifacts@1
+    inputs:
+      buildType: 'specific'
+      project: '${{ parameters.projectid }}'
+      pipeline: '23'
+      buildVersionToDownload: 'latest'
+      downloadType: 'single'
+      artifactName: 'modules'
+      downloadPath: '$(System.DefaultWorkingDirectory)'    
+    displayName: 'Download Modules'  
+
+  - task: Bash@3
+    name: 'TerraformPlan'
+    env:
+      ARM_CLIENT_SECRET: $(clientsecret)
+    inputs:
+      targetType: 'inline'
+      script: |
+        terraform init -backend-config="resource_group_name=$TERRAFORMSTORAGERG" \
+                      -backend-config="storage_account_name=$TERRAFORMSTORAGEACCOUNT" \
+                      -backend-config="container_name=$TERRAFORMSTORAGECONTAINER" \
+                      -backend-config="key=$STATEFILENAME"
+        terraform plan -out="main.tfplan" -input=false
+        # terraform show -json main.tfplan > tfplan.json
+      workingDirectory: '$(System.DefaultWorkingDirectory)/Platform/Layers/${{ parameters.Layer }}'
+
+  - task: CopyFiles@2
+    displayName: "Copy provider configurations"
+    condition: succeeded()
+    inputs:
+      SourceFolder: '$(System.DefaultWorkingDirectory)/Platform'
+      Contents: |
+        Layers/**  
+        !Layers/**/.terraform/**/*
+        !.terraform/**/*
+      TargetFolder: '$(Build.ArtifactStagingDirectory)'
+      CleanTargetFolder: true
+      flattenFolders: false 
+
+  - task: PublishBuildArtifacts@1
+    inputs:
+      PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+      ArtifactName: 'Platform'
+      publishLocation: 'Container'

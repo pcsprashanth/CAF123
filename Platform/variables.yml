@@ -1,0 +1,6 @@
+variables:
+  ServiceConnection: 'platform-core' # <--- CHANGE TO DEVOPS SERVICE CONNECTION NAME
+
+  vmImage: 'ubuntu-latest'
+  poolName: ''
+  projectid: "xxxxxx"
