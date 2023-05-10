@@ -11,12 +11,10 @@ data "azurerm_client_config" "core" {}
 
 ##### Module for Subscriptions #########
 
- 
-
-module "subscription" {
-  source        = "../modules/subscription"
-  subscriptions = var.subscriptions
-}
+# module "subscription" {
+#  source        = "../modules/subscription"
+#  subscriptions = var.subscriptions
+#}
 
  
 
@@ -24,12 +22,9 @@ module "subscription" {
 # and provide a base configuration.
 
  
-
 module "enterprise_scale" {
   source  = "Azure/caf-enterprise-scale/azurerm"
   version = "3.3.0"
-
- 
 
   providers = {
     azurerm              = azurerm
@@ -37,17 +32,13 @@ module "enterprise_scale" {
     azurerm.management   = azurerm
   }
 
- 
-
-  root_parent_id = data.azurerm_client_config.core.tenant_id
+  root_parent_id = data.azurerm_client_config.core.tenant_id
   root_id        = var.root_id
   root_name      = var.root_name
 
  
 
   ###### Deploys MG structure with naming convention provided by customer and disables deployment of default core structure ######
-
- 
 
   deploy_core_landing_zones = false
 
