@@ -15,8 +15,7 @@
 # Declare the Azure landing zones Terraform module
 # and provide a base configuration.
 
- 
- module "enterprise_scale" {
+module "enterprise_scale" {
  source  = "Azure/caf-enterprise-scale/azurerm"
  version = "3.3.0"
 
