@@ -1,7 +1,8 @@
 {
     "es_management": {
         "policy_assignments": [
-            "Audit-log-analytics-depl"
+            "Audit-log-analytics-depl",
+            "Audit-Cloud-Security-Benchmark"
         ],
         "policy_definitions": [],
         "policy_set_definitions": [],
