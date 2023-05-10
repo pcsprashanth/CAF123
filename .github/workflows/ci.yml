@@ -37,11 +37,14 @@ jobs:
     # # Checks that all Terraform configuration files adhere to a canonical format
       - name: Terraform Format
         run: terraform fmt -check
+        working-directory: ${{ env.TF_WORKING_DIR }}
     
     # # Checks that all Terraform configuration files adhere to a canonical format
     
       - name: Terraform Validate
         run: terraform validate -no-color
+        working-directory: ${{ env.TF_WORKING_DIR }}
+        
     # # Generates an execution plan for Terraform
       - name: Terraform Plan
         run: terraform plan
