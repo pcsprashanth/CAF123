@@ -3,22 +3,22 @@
 # current Tenant ID used as the ID for the "Tenant Root Group"
 # Management Group.
 
-data "azurerm_client_config" "core" {}
+# data "azurerm_client_config" "core" {}
 
 ##### Module for Subscriptions #########
 
-module "subscription" {
-  source = "../modules/subscription"
-  subscriptions = var.subscriptions
-}
+# module "subscription" {
+#  source = "../modules/subscription"
+#  subscriptions = var.subscriptions
+# }
 
 # Declare the Azure landing zones Terraform module
 # and provide a base configuration.
 
  
-module "enterprise_scale" {
-  source  = "Azure/caf-enterprise-scale/azurerm"
-  version = "3.3.0"
+ module "enterprise_scale" {
+ source  = "Azure/caf-enterprise-scale/azurerm"
+ version = "3.3.0"
 
   providers = {
     azurerm              = azurerm
@@ -26,28 +26,28 @@ module "enterprise_scale" {
     azurerm.management   = azurerm
   }
 
-  root_parent_id = data.azurerm_client_config.core.tenant_id
+#  root_parent_id = data.azurerm_client_config.core.tenant_id
   root_id        = var.root_id
   root_name      = var.root_name
 
  
 
-  ###### Deploys MG structure with naming convention provided by customer and disables deployment of default core structure ######
+#  ###### Deploys MG structure with naming convention provided by customer and disables deployment of default core structure ######
 
-  deploy_core_landing_zones = false
+#  deploy_core_landing_zones = false
 
  
-  custom_landing_zones = {
-    "${var.root_id}" = {
-      display_name               = "${lower(var.root_name)}"
-      parent_management_group_id = "${data.azurerm_client_config.core.tenant_id}"
-      subscription_ids           = []
-      archetype_config = {
-        archetype_id   = "default_empty"
-        parameters     = {}
-        access_control = {}
-      }
-    }
+#  custom_landing_zones = {
+#    "${var.root_id}" = {
+#      display_name               = "${lower(var.root_name)}"
+#      parent_management_group_id = "${data.azurerm_client_config.core.tenant_id}"
+#      subscription_ids           = []
+#      archetype_config = {
+#        archetype_id   = "default_empty"
+#        parameters     = {}
+#        access_control = {}
+#      }
+#    }
     "${var.root_id}-platform" = {
       display_name               = "Platform"
       parent_management_group_id = "${var.root_id}"
