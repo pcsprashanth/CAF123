@@ -3,20 +3,14 @@
 # current Tenant ID used as the ID for the "Tenant Root Group"
 # Management Group.
 
- 
-
 data "azurerm_client_config" "core" {}
-
- 
 
 ##### Module for Subscriptions #########
 
-# module "subscription" {
-#  source        = "../modules/subscription"
-#  subscriptions = var.subscriptions
-#}
-
- 
+module "subscription" {
+  source        = "../modules/subscription"
+  subscriptions = var.subscriptions
+}
 
 # Declare the Azure landing zones Terraform module
 # and provide a base configuration.
@@ -43,7 +37,6 @@ module "enterprise_scale" {
   deploy_core_landing_zones = false
 
  
-
   custom_landing_zones = {
     "${var.root_id}" = {
       display_name               = "${lower(var.root_name)}"
