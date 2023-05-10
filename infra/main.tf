@@ -1,29 +1,15 @@
-# Get the current client configuration from the AzureRM provider.
-# This is used to populate the root_parent_id variable with the
-# current Tenant ID used as the ID for the "Tenant Root Group"
-# Management Group.
+terraform {
+  required_providers {
+    azurerm = {
+      source  = "hashicorp/azurerm"
+      version = ">= 3.23.0"
+    }
+  }
+}
 
-# data "azurerm_client_config" "core" {}
-
-##### Module for Subscriptions #########
-
-# module "subscription" {
-#  source = "../modules/subscription"
-#  subscriptions = var.subscriptions
-# }
-
-# Declare the Azure landing zones Terraform module
-# and provide a base configuration.
-
-module "enterprise_scale" {
- source  = "Azure/caf-enterprise-scale/azurerm"
- version = "3.3.0"
-
-  providers = {
-    azurerm              = azurerm
-    azurerm.connectivity = azurerm
-    azurerm.management   = azurerm
-  }
+provider "azurerm" {
+  features {}
+}
 
 #  root_parent_id = data.azurerm_client_config.core.tenant_id
   root_id        = var.root_id
