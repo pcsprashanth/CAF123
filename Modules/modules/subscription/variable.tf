@@ -9,7 +9,7 @@ variable "subscriptions" {
   }))
 }
 
-variable "subscription_billing_scope" {
+variable "subscription_scope" {
   type        = string
   default     = "/providers/Microsoft.Billing/billingAccounts/xxxxxxxxxxxxxx/enrollmentAccounts/xxxxxxxxxxxxxx"
   description = <<DESCRIPTION
