@@ -1,0 +1,17 @@
+name: Foundation develop branch workflow
+
+on:
+ push:
+    branches:
+      - 'develop'
+ pull_request:
+    branches:
+      - 'develop'
+
+jobs:
+terraform-cd:
+  uses: ./.github/workflows/cd.yml
+  with:
+    environment: dev
+    iupipes-config-path: '.iupipes.yml'
+  secrets: inherit
