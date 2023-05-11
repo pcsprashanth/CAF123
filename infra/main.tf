@@ -7,8 +7,7 @@ data "azurerm_client_config" "core" {}
 
 ##### Module for Subscriptions #########
 module "subscription" {
-    source = "../modules/subscription"
-    subscriptions = var.subscriptions
+    subscriptions = var.subscription_scope
 }
 
 # Declare the Azure landing zones Terraform module
