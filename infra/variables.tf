@@ -1,8 +1,13 @@
 # Use variables to customize the deployment
 
+variable "tenant_id" {
+    type    = string
+    default = "4e7ca2bc-d00a-4f0b-b95f-dde694a4b4ac"
+}
+
 variable "root_id" {
-  type    = string
-  default = "mg-itaudev"
+    type    = string
+    default = "mg-itaudev"
 }
 
  

@@ -3,30 +3,23 @@
 # current Tenant ID used as the ID for the "Tenant Root Group"
 # Management Group.
 
-data "azurerm_client_config" "core" {}
-
-##### Module for Subscriptions #########
-module "subscription" {
-    subscriptions = var.subscription_scope
-}
-
 # Declare the Azure landing zones Terraform module
 # and provide a base configuration.
 
  
 module "enterprise_scale" {
- source  = "Azure/caf-enterprise-scale/azurerm"
- version = "3.3.0"
+    source  = "Azure/caf-enterprise-scale/azurerm"
+    version = "3.3.0"
 
-  providers = {
-    azurerm              = azurerm
-    azurerm.connectivity = azurerm
-    azurerm.management   = azurerm
-  }
+    providers = {
+        azurerm              = azurerm
+        azurerm.connectivity = azurerm
+        azurerm.management   = azurerm
+  }
 
-#  root_parent_id = data.azurerm_client_config.core.tenant_id
-  root_id        = var.root_id
-  root_name      = var.root_name
+    root_parent_id = var.tenant_id
+    root_id        = var.root_id
+    root_name      = var.root_name
 
  
 
@@ -35,16 +28,16 @@ module "enterprise_scale" {
   deploy_core_landing_zones = false
 
 custom_landing_zones = {
-#    "${var.root_id}" = {
-#      display_name               = "${lower(var.root_name)}"
-#      parent_management_group_id = "${data.azurerm_client_config.core.tenant_id}"
-#      subscription_ids           = []
-#      archetype_config = {
-#        archetype_id   = "default_empty"
-#        parameters     = {}
-#        access_control = {}
-#      }
-#    }
+     "${var.root_id}" = {
+      display_name               = "${lower(var.root_name)}"
+      parent_management_group_id = "${tenant_id}"
+      subscription_ids           = []
+      archetype_config = {
+        archetype_id   = "default_empty"
+        parameters     = {}
+        access_control = {}
+      }
+   }
     "${var.root_id}-platform" = {
       display_name               = "Platform"
       parent_management_group_id = "${var.root_id}"
@@ -76,17 +69,17 @@ custom_landing_zones = {
       }
       # depends_on= [azurerm_subscription.connectivity1,azurerm_subscription.connectivity2]
     }
-    "${var.root_id}-sandbox" = {
-      display_name               = "Sandbox"
-      parent_management_group_id = "${var.root_id}"
-      subscription_ids           = ["${module.subscription.subscription_id["itaudev-sbx-01"]}", "${module.subscription.subscription_id["itaudev-sbx-02"]}"]
-      archetype_config = {
-        archetype_id   = "default_empty"
-        parameters     = {}
-        access_control = {}
-      }
+ #   "${var.root_id}-sandbox" = {
+ #     display_name               = "Sandbox"
+ #     parent_management_group_id = "${var.root_id}"
+ #     subscription_ids           = ["${module.subscription.subscription_id["itaudev-sbx-01"]}", "${module.subscription.subscription_id["itaudev-sbx-02"]}"]
+ #     archetype_config = {
+ #       archetype_id   = "default_empty"
+ #       parameters     = {}
+ #       access_control = {}
+ #     }
       # depends_on= [azurerm_subscription.management1]
-    }
+ #  }
     "${var.root_id}-iam" = {
       display_name               = "Identity and Access Management"
       parent_management_group_id = "${var.root_id}-platform"
@@ -98,8 +91,6 @@ custom_landing_zones = {
       }
       # depends_on= [azurerm_subscription.identity1]
     }
-
- 
 
     "${var.root_id}-management" = {
       display_name               = "Management"
